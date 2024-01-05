@@ -1,0 +1,128 @@
+openapi: 3.0.3
+info:
+  title: event-spot-manager
+  description: event-spot description
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8010/
+    description: local dev instance
+
+paths:
+  /event-spots:
+    get:
+      summary: get all event-spots
+      operationId: getAllEventSpots
+      responses:
+        200:
+          description: all event-spots for events
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/event-spot'
+    post:
+      summary: create a new event-spot
+      operationId: createEventSpot
+      responses:
+        200:
+          description: Created
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/event-spot-error'
+        409:
+          description: id conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/event-spot-error'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/event-spot'
+
+  /event-spots/{event-spotId}:
+    parameters:
+      - name: event-spotId
+        description: the event-spot unique id
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      summary: get event-spot for event
+      operationId: getEventSpotById
+      responses:
+        200:
+          description: the event-spot for event provided successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/event-spot'
+        404:
+          description: the event-spot not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/event-spot-error'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/event-spot-error'
+    delete:
+      summary: deletes event-spot for event
+      operationId: deleteEventSpotById
+      responses:
+        200:
+          description: delete the event-spot for event
+        404:
+          description: the event-spot not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/event-spot-error'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/event-spot-error'
+components:
+  schemas:
+    event-spot:
+      type: object
+      required:
+        - id
+        - name
+        - capacity
+        - eventSpotType
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        capacity:
+          type: number
+        eventSpotType:
+          type: string
+          enum:
+            - stadium
+            - outdoor
+            - town square
+            - park
+    event-spot-error:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          description: error message
+          type: string
