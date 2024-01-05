@@ -1,0 +1,1 @@
+# event-spot-app-open-api
